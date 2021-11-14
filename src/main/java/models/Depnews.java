@@ -21,4 +21,16 @@ public class Depnews implements Comparable<Depnews>{
         this.createdat = System.currentTimeMillis();
         setFormattedCreatedAt();
     }
+    @Override
+    public int compareTo(Depnews depnewsObject){
+        if(this.createdat < depnewsObject.createdat){
+            return -1;
+        }
+        else if(this.createdat > depnewsObject.createdat){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
 }
