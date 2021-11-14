@@ -7,4 +7,10 @@ public class Department{
     private String name;
     private String description;
     private String size;
+
+    public Department(String name, String description, String size){
+        this.name = name;
+        this.description = description;
+        this.size =size;
+    }
 }
