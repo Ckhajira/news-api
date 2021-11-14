@@ -7,4 +7,10 @@ public class User{
     private String name;
     private String title;
     private String role;
+
+    public User(String name, String title, String role){
+        this.name = name;
+        this.title = title;
+        this.role = role;
+    }
 }
