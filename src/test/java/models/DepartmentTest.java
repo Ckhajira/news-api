@@ -29,7 +29,7 @@ public class DepartmentTest {
 
     @Test
     public void getName() {
-        assertEquals("Fish Witch", testDepartment.getName());
+        assertEquals("Ai", testDepartment.getName());
     }
 
     @Test
