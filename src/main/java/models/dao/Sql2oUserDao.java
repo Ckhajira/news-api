@@ -57,5 +57,51 @@ public void add(User user){
             }
         }
 
+        @Override
+    public void addUserToDepartment(User user, Department department){
+        String sql = "INSERT INTO departments_users (departmentid, userid) VALUES (:departmentid, :userid)";
+        try(Connection con = sql2o.open()){
+            con.createQuery(sql)
+                    .addParameter("departmentId", department.getId())
+                    .addParameter("userId", user.getId())
+                    .executeUpdate();
+        } catch (Sql2oException ex){
+            System.out.println(ex);
+        }
 
+        }
+
+    @Override
+    public List<Department> getAllDepartmentsForAUser(int userId) {
+        List<Department> departments = new ArrayList();
+        String joinQuery="SELECT departmentid FROM departments_users WHERE userid = :userid";
+        try (Connection con = sql2o.open()) {
+            List<Integer> allDepartmentsIds = con.createQuery(joinQuery)
+                    .addParameter("userId",userId)
+                    .executeAndFetch(Integer.class);
+            for(Integer departmentId:allDepartmentsIds){
+                String departmentQuery = "SELECT * FROM departments WHERE id = departmentId";
+                departments.add(
+                        con.createQuery(departmentQuery)
+                                .addParameter("departmentId", departmentId)
+                                .executeAndFetchFirst(Department.class));
+            }
+        }catch (Sql2oException ex){
+            System.out.println(ex);
+        }
+        return departments;
+    }
+
+    @Override
+    public User findById(int id) {
+        try (Connection con = sql2o.open()){
+            return con.createQuery("SELECT * FROM users WHERE id = :id")
+                    .addParameter("id", id)
+                    .executeAndFetchFirst(User.class);
+        }
+    }
 }
+
+
+
+
