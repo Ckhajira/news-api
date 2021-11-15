@@ -82,7 +82,67 @@ public class App{
             return gson.toJson(user);
         });
 
+        //View All the departments
+        get("/departments","application/json", (req,res) ->{
+            System.out.println(departmentDao.getAll());
 
+            if(departmentDao.getAll().size()> 0){
+                return gson.toJson(departmentDao.getAll());
+            } else {
+                return "{\"message\":\"I'm sorry , but no departments are currently listed in the database.\"}";
+            }
+        });
+
+        //View a single department
+        get("/departments/:id","application/json",(req,res) -> {
+            int departmentId = Integer.parseInt(req.params("id"));
+            Department departmentToFind = departmentDao.findById(departmentId);
+            if(departmentToFind == null){
+                throw new ApiException(404, String.format("No department with the id:\"%s\" exists",req.params("id")));
+            }
+            return gson.toJson(departmentToFind);
+        });
+
+        //View all Department news for a single department
+        get("/departments/:id/depnews","application/json", (req,res) -> {
+            int departmentId = Integer.parseInt(req.params("id"));
+            Department departmentToFind = departmentDao.findById(departmentId);
+            List<Depnews> allDepnews;
+            if(departmentToFind == null){
+                throw new ApiException(404, String.format("No department with the id: \"%s\" exists", req.params("id")));
+            }
+            allDepnews = depnewsDao.getAllDepnewsByDepartment(departmentId);
+            return gson.toJson(allDepnews);
+        });
+
+        //View all users
+        get("/users", "application/json", (req,res) -> {
+            return gson.toJson(userDao.getAll());
+        });
+
+        //CREATE a new department
+        post("/departments/new", "application/json", (req, res) -> {
+            Department department = gson.fromJson(req.body(),Department.class);
+            departmentDao.add(department);
+            res.type("application/json");
+            res.status(201);
+            return gson.toJson(department);
+        });
+
+        //FILTERS
+        exception(ApiException.class, (exception, req, res) -> {
+            ApiException err = exception;
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("status",err.getStatusCode());
+            jsonMap.put("errorMessage",err.getMessage());
+            res.type("application/json");
+            res.status(err.getStatusCode());
+            res.body(gson.toJson(jsonMap));
+        });
+
+        after((req,res) -> {
+            res.type("application/json");
+        });
 
 
     }
