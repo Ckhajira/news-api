@@ -31,5 +31,39 @@ public class App{
         userDao = new Sql2oUserDao(sql2o);
         depnewsDao = new Sql2oDepnewsDao(sql2o);
 
+        //Add user to a department
+        post("/departments/:departmentId/user/:userId", "application/json",(req,res)-> {
+
+            int departmentId = Integer.parseInt(req.params("departmentId"));
+            int userId = Integer.parseInt(req.params("userId"));
+            Department department = departmentDao.findById(departmentId);
+            User user = userDao.findById(userId);
+
+            if(department != null && user != null){
+                //both exist and can be associated
+                userDao.addUserToDepartment(user,department);
+                res.status(201);
+                return gson.toJson(String.format("Department '%s' and User '%s' have been associated", user.getName(),department.getName()));
+            } else {
+                throw new ApiException(404,String.format("Department or User does not exist"));
+            }
+        });
+
+        //get All departments for a user
+        get("/users/:id/departments", "application/json",(req,res)-> {
+            int userId = Integer.parseInt(req.params("id"));
+            User userToFind = userDao.findById(userId);
+            if(userToFind == null){
+                throw new ApiException(404,String.format("No user with the id: \"%s\" exists", req.params("id")));
+            } else if (userDao.getAllDepartmentsForAUser(userId).size()==0){
+                return "{\"message\":\"I'm sorry, but no departments are listed for this user.\"}";
+            } else {
+                return gson.toJson(userDao.getAllDepartmentsForAUser(userId));
+            }
+        });
+
+
+
+
     }
 }
