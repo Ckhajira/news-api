@@ -62,6 +62,26 @@ public class App{
             }
         });
 
+        //Add department news
+        post("/departments/:departmentId/depnews/new","application/json", (req,res) ->{
+            int departmentId = Integer.parseInt(req.params("departmentId"));
+            Depnews depnews = gson.fromJson(req.body(),Depnews.class);
+            depnews.setCreatedat();
+            depnews.setFormattedCreatedAt();
+            depnews.setDepartmentId(departmentId);
+            depnewsDao.add(depnews);
+            res.status(201);
+            return gson.toJson(depnews);
+        });
+
+        //Add new user
+        post("/users/new", "application/json",(req,res) -> {
+            User user = gson.fromJson(req.body(),User.class);
+            userDao.add(user);
+            res.status(201);
+            return gson.toJson(user);
+        });
+
 
 
 

@@ -79,6 +79,9 @@ public class Depnews implements Comparable<Depnews>{
     public void setCreatedat(long createdat) {
         this.createdat = createdat;
     }
+    public void setCreatedat() {
+        this.createdat = System.currentTimeMillis();
+    }
 
     public void setDepartmentId(int departmentId) {
         this.departmentId = departmentId;
@@ -115,4 +118,6 @@ public class Depnews implements Comparable<Depnews>{
     public int hashCode() {
         return Objects.hash(id, content, writtenBy, rating, departmentId, createdat, formattedCreatedAt);
     }
+
+
 }
